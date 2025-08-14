@@ -2,6 +2,13 @@
 .SYNOPSIS
 Automatically installs Opera Proxy with proper shortcut creation
 #>
+
+# Check admin rights
+if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -Command `"irm https://go.bibica.net/opera-proxy | iex`"" -Verb RunAs
+    exit
+}
+
 clear
 # Configuration
 $operaProxyPath = "C:\opera-proxy"
