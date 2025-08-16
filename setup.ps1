@@ -19,7 +19,7 @@ if (Test-Path $operaProxyPath) { Remove-Item $operaProxyPath -Recurse -Force }
 New-Item -ItemType Directory -Path $operaProxyPath -Force | Out-Null
 
 # Determine architecture
-$arch = switch ((Get-WmiObject Win32_Processor).Architecture) {
+$arch = switch ((Get-WmiObject Win32_Processor | Select-Object -First 1).Architecture) {
    0 { "386" }
    9 { "amd64" }
    12 { "arm64" }
