@@ -85,7 +85,7 @@ On Error GoTo 0
 WScript.Sleep 1000
 
 ws.CurrentDirectory = "$operaProxyPath"
-ws.Run "opera-proxy.exe -country AS -bind-address 127.0.0.1:10001 -bootstrap-dns https://dns.google/dns-query -fake-SNI www.cloudflare.com -socks-mode  -override-proxy-address 77.111.245.11", 0, False
+ws.Run "opera-proxy.exe -country AS -bind-address 127.0.0.1:10001 -bootstrap-dns https://dns.google/dns-query -fake-SNI www.cloudflare.com -socks-mode -override-proxy-address 77.111.245.11", 0, False
 ws.Run "opera-proxy.exe -country AM -bind-address 127.0.0.1:10002 -bootstrap-dns https://dns.google/dns-query -fake-SNI www.cloudflare.com -socks-mode", 0, False
 ws.Run "opera-proxy.exe -country EU -bind-address 127.0.0.1:10003 -bootstrap-dns https://dns.google/dns-query -fake-SNI www.cloudflare.com -socks-mode", 0, False
 "@ | Out-File "$operaProxyPath\opera-proxy-singapore-1.vbs" -Encoding ASCII
@@ -108,7 +108,7 @@ On Error GoTo 0
 WScript.Sleep 1000
 
 ws.CurrentDirectory = "$operaProxyPath"
-ws.Run "opera-proxy.exe -country AS -bind-address 127.0.0.1:10001 -bootstrap-dns https://dns.google/dns-query -fake-SNI www.cloudflare.com -socks-mode  -override-proxy-address 77.111.245.12", 0, False
+ws.Run "opera-proxy.exe -country AS -bind-address 127.0.0.1:10001 -bootstrap-dns https://dns.google/dns-query -fake-SNI www.cloudflare.com -socks-mode -override-proxy-address 77.111.245.12", 0, False
 ws.Run "opera-proxy.exe -country AM -bind-address 127.0.0.1:10002 -bootstrap-dns https://dns.google/dns-query -fake-SNI www.cloudflare.com -socks-mode", 0, False
 ws.Run "opera-proxy.exe -country EU -bind-address 127.0.0.1:10003 -bootstrap-dns https://dns.google/dns-query -fake-SNI www.cloudflare.com -socks-mode", 0, False
 "@ | Out-File "$operaProxyPath\opera-proxy-singapore-2.vbs" -Encoding ASCII
