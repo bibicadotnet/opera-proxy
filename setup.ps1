@@ -14,8 +14,8 @@ $shortcutPath = Join-Path $startupPath "opera-proxy.lnk"
 # Cleanup previous installation
 Get-Process -Name "opera-proxy" -ErrorAction SilentlyContinue | Stop-Process -Force
 Get-WmiObject Win32_Process | Where-Object {$_.Name -eq "wscript.exe" -and $_.CommandLine -like "*opera-proxy.vbs*"} | ForEach-Object {$_.Terminate()}
-
 Start-Sleep -Milliseconds 500
+
 if (Test-Path $shortcutPath) { Remove-Item $shortcutPath -Force }
 if (Test-Path $operaProxyPath) { Remove-Item $operaProxyPath -Recurse -Force }
 New-Item -ItemType Directory -Path $operaProxyPath -Force | Out-Null
@@ -35,21 +35,19 @@ $downloadUrl = ($release.assets | Where-Object name -eq $downloadName).browser_d
 (New-Object System.Net.WebClient).DownloadFile($downloadUrl, "$operaProxyPath\$downloadName")
 Rename-Item "$operaProxyPath\$downloadName" "opera-proxy.exe" -Force
 
-# Generate random ports for 3 servers
-$portAS = Get-Random -Minimum 10000 -Maximum 10099
-$portAM = Get-Random -Minimum 10100 -Maximum 10199
-$portEU = Get-Random -Minimum 10200 -Maximum 10299
-
-$fakeDomains = @("voz.vn", "google.com", "microsoft.com", "youtube.com", "facebook.com", "amazon.com", "apple.com", "netflix.com", "twitter.com", "instagram.com", "linkedin.com", "github.com", "stackoverflow.com", "reddit.com", "wikipedia.org", "gmail.com", "outlook.com", "yahoo.com", "bing.com", "cloudflare.com")
-$randomDomain = $fakeDomains | Get-Random
-
 # Create VBS launcher for all 3 servers
 @"
 Set ws = CreateObject("WScript.Shell")
+
+' Kill existing opera-proxy processes
+ws.Run "taskkill /f /im opera-proxy.exe", 0, True
+
+WScript.Sleep 500
+
 ws.CurrentDirectory = "$operaProxyPath"
-ws.Run "opera-proxy.exe -country AS -bind-address 127.0.0.1:$portAS -bootstrap-dns https://dns.google/dns-query -fake-SNI $randomDomain -socks-mode", 0, False
-ws.Run "opera-proxy.exe -country AM -bind-address 127.0.0.1:$portAM -bootstrap-dns https://dns.google/dns-query -fake-SNI $randomDomain -socks-mode", 0, False
-ws.Run "opera-proxy.exe -country EU -bind-address 127.0.0.1:$portEU -bootstrap-dns https://dns.google/dns-query -fake-SNI $randomDomain -socks-mode", 0, False
+ws.Run "opera-proxy.exe -country AS -bind-address 127.0.0.1:10001 -bootstrap-dns https://dns.google/dns-query -fake-SNI www.cloudflare.com -socks-mode", 0, False
+ws.Run "opera-proxy.exe -country AM -bind-address 127.0.0.1:10002 -bootstrap-dns https://dns.google/dns-query -fake-SNI www.cloudflare.com -socks-mode", 0, False
+ws.Run "opera-proxy.exe -country EU -bind-address 127.0.0.1:10003 -bootstrap-dns https://dns.google/dns-query -fake-SNI www.cloudflare.com -socks-mode", 0, False
 "@ | Out-File "$operaProxyPath\opera-proxy.vbs" -Encoding ASCII
 
 # Create startup shortcut
@@ -69,15 +67,15 @@ $info = @"
 Opera Socks5 Proxy installed successfully!
 
 IP: 127.0.0.1
-Port: $portAS
+Port: 10001
 Location: Singapore
 
 IP: 127.0.0.1
-Port: $portAM
+Port: 10002
 Location: Americas
 
 IP: 127.0.0.1
-Port: $portEU
+Port: 10003
 Location: Europe
 
 Config file: $operaProxyPath\opera-proxy.vbs
